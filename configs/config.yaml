@@ -1,0 +1,16 @@
+server:
+  http:
+    addr: 0.0.0.0:8000
+    timeout: 1s
+  grpc:
+    addr: 0.0.0.0:9000
+    timeout: 1s
+data:
+  database:
+    dsn: "mongodb://10.181.4.10:27017"
+  file:
+    basePath: ./file
+    feedbackPath: ./file
+    filePath: ./data
+jwt:
+  secret: "hello"

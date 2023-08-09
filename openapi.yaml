@@ -1,0 +1,173 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: Backend API
+    version: 0.0.1
+paths:
+    /api/profiles/{username}:
+        get:
+            tags:
+                - Backend
+            operationId: Backend_GetProfile
+            parameters:
+                - name: username
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/backend.v1.ProfileReply'
+    /api/user:
+        get:
+            tags:
+                - Backend
+            operationId: Backend_GetCurrentUser
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/backend.v1.UserReply'
+        put:
+            tags:
+                - Backend
+            operationId: Backend_UpdateUser
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/backend.v1.UpdateUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/backend.v1.UserReply'
+    /api/users:
+        post:
+            tags:
+                - Backend
+            operationId: Backend_Register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/backend.v1.RegisterRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/backend.v1.UserReply'
+    /api/users/login:
+        post:
+            tags:
+                - Backend
+            operationId: Backend_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/backend.v1.LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/backend.v1.UserReply'
+components:
+    schemas:
+        backend.v1.LoginRequest:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/backend.v1.LoginRequest_User'
+        backend.v1.LoginRequest_User:
+            type: object
+            properties:
+                email:
+                    type: string
+                password:
+                    type: string
+        backend.v1.Profile:
+            type: object
+            properties:
+                username:
+                    type: string
+                bio:
+                    type: string
+                image:
+                    type: string
+                following:
+                    type: boolean
+        backend.v1.ProfileReply:
+            type: object
+            properties:
+                profile:
+                    $ref: '#/components/schemas/backend.v1.Profile'
+        backend.v1.RegisterRequest:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/backend.v1.RegisterRequest_User'
+        backend.v1.RegisterRequest_User:
+            type: object
+            properties:
+                username:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+        backend.v1.UpdateUserRequest:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/backend.v1.UpdateUserRequest_User'
+        backend.v1.UpdateUserRequest_User:
+            type: object
+            properties:
+                username:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+                bio:
+                    type: string
+                image:
+                    type: string
+        backend.v1.UserReply:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/backend.v1.UserReply_User'
+        backend.v1.UserReply_User:
+            type: object
+            properties:
+                email:
+                    type: string
+                token:
+                    type: string
+                username:
+                    type: string
+                bio:
+                    type: string
+                image:
+                    type: string
+tags:
+    - name: Backend

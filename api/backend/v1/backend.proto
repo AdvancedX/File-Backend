@@ -1,0 +1,91 @@
+  syntax = "proto3";
+
+package backend.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "kratos-backend/api/backend/v1;v1";
+
+service Backend {
+  rpc Login(LoginRequest) returns (UserReply) {
+    option (google.api.http) = {
+      post:"/api/users/login",
+      body:"*",
+    };
+  }
+
+  rpc Register(RegisterRequest) returns (UserReply){
+    option (google.api.http) = {
+      post:"/api/users",
+      body:"*",
+    };
+  }
+
+  rpc GetCurrentUser(GetCurrentUserRequest) returns (UserReply){
+    option (google.api.http) = {
+      get:"/api/user",
+    };
+  }
+
+  rpc UpdateUser(UpdateUserRequest) returns (UserReply){
+    option (google.api.http) = {
+      put:"/api/user",
+      body:"*",
+    };
+  }
+  rpc GetProfile(GetProfileRequest) returns (ProfileReply) {
+    option (google.api.http) = {
+      get : "/api/profiles/{username}",
+    };
+  }
+}
+
+message GetCurrentUserRequest{ }
+message GetProfileRequest { string username = 1; }
+message ProfileReply { Profile profile = 1; }
+message UpdateUserRequest {
+  message User {
+      string username = 1;
+      string email = 2;
+      string password = 3;
+      string bio = 4;
+      string image = 5;
+  }
+  User user = 1;
+}
+message Profile {
+  string username = 1;
+  string bio = 2;
+  string image = 3;
+  bool following = 4;
+}
+message UserReply {
+  
+  message User {
+      string email = 1;
+      string token = 2;
+      string username = 3;
+      string bio = 4;
+      string image = 5;
+  }
+  User user = 1;
+}
+message LoginRequest {
+
+  message User {
+      string email = 1;
+      string password = 2;
+  }
+
+  User user = 1;
+}
+message RegisterRequest{
+
+  message User {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+}
+
+User user = 1;
+}
