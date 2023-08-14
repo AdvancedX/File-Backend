@@ -1,4 +1,4 @@
-  syntax = "proto3";
+syntax = "proto3";
 
 package backend.v1;
 
@@ -33,16 +33,26 @@ service Backend {
       body:"*",
     };
   }
-  rpc GetProfile(GetProfileRequest) returns (ProfileReply) {
+
+  rpc DeleteFile(DeleteFileRequest) returns (DeleteFileReply) {
     option (google.api.http) = {
-      get : "/api/profiles/{username}",
+        delete:"/v1/file/{fileID}",
+    };
+  }
+  rpc ListFileByType(ListFileRequest) returns (ListFileReply) {
+    option (google.api.http) = {
+      get : "/v1/file/{fileType}",
     };
   }
 }
 
 message GetCurrentUserRequest{ }
+
 message GetProfileRequest { string username = 1; }
-message ProfileReply { Profile profile = 1; }
+
+
+
+
 message UpdateUserRequest {
   message User {
       string username = 1;
@@ -53,23 +63,33 @@ message UpdateUserRequest {
   }
   User user = 1;
 }
-message Profile {
-  string username = 1;
-  string bio = 2;
-  string image = 3;
-  bool following = 4;
+
+
+
+message File {
+  string id = 1;
+  string type = 2;
+  string title = 3;
+  string description = 4;
+  repeated string tags = 5;
+  string updateTime = 6;
+  string filePath = 7;
 }
+
+
+
 message UserReply {
   
   message User {
       string email = 1;
       string token = 2;
       string username = 3;
-      string bio = 4;
-      string image = 5;
   }
   User user = 1;
 }
+
+
+
 message LoginRequest {
 
   message User {
@@ -79,6 +99,9 @@ message LoginRequest {
 
   User user = 1;
 }
+
+
+
 message RegisterRequest{
 
   message User {
@@ -89,3 +112,10 @@ message RegisterRequest{
 
 User user = 1;
 }
+
+
+
+message DeleteFileRequest{string fileID =1;}
+message DeleteFileReply{}
+message ListFileRequest{string fileType =1;}
+message ListFileReply{repeated File files =1;}

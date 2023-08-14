@@ -24,7 +24,7 @@ func CreateFileHandler(backend *service.BackendService) func(ctx http.Context) e
 		req.Type = ctx.Request().MultipartForm.Value["type"][0]
 		req.Title = ctx.Request().MultipartForm.Value["title"][0]
 		req.Description = ctx.Request().MultipartForm.Value["description"][0]
-		req.Tags = strings.Split(ctx.Request().MultipartForm.Value["tags"][0], ",")
+		req.Tags = ctx.Request().MultipartForm.Value["tags"]
 		req.FilePart = ctx.Request().MultipartForm.File["FilePart"][0]
 		if !utils.SliceContainsAny(files, strings.ToLower(path.Ext(req.FilePart.Filename))) {
 			return errors.New("文件格式错误，请输入其中的一种")
@@ -61,7 +61,7 @@ func UpdateFileHandler(backend *service.BackendService) func(ctx http.Context) e
 		if len(FilePartParam) != 0 {
 			if !utils.SliceContainsAny(files, strings.ToLower(path.Ext(FilePartParam[0].Filename))) {
 				return err
-				fmt.Println("视频文件格式错误，请输入其中的一种")
+				fmt.Println("文件格式错误，请输入其中的一种")
 			}
 			req.FilePart = FilePartParam[0]
 		}

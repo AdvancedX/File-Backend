@@ -23,7 +23,8 @@ const (
 	Backend_Register_FullMethodName       = "/backend.v1.Backend/Register"
 	Backend_GetCurrentUser_FullMethodName = "/backend.v1.Backend/GetCurrentUser"
 	Backend_UpdateUser_FullMethodName     = "/backend.v1.Backend/UpdateUser"
-	Backend_GetProfile_FullMethodName     = "/backend.v1.Backend/GetProfile"
+	Backend_DeleteFile_FullMethodName     = "/backend.v1.Backend/DeleteFile"
+	Backend_ListFileByType_FullMethodName = "/backend.v1.Backend/ListFileByType"
 )
 
 // BackendClient is the client API for Backend service.
@@ -34,7 +35,8 @@ type BackendClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*UserReply, error)
 	GetCurrentUser(ctx context.Context, in *GetCurrentUserRequest, opts ...grpc.CallOption) (*UserReply, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UserReply, error)
-	GetProfile(ctx context.Context, in *GetProfileRequest, opts ...grpc.CallOption) (*ProfileReply, error)
+	DeleteFile(ctx context.Context, in *DeleteFileRequest, opts ...grpc.CallOption) (*DeleteFileReply, error)
+	ListFileByType(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error)
 }
 
 type backendClient struct {
@@ -81,9 +83,18 @@ func (c *backendClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, o
 	return out, nil
 }
 
-func (c *backendClient) GetProfile(ctx context.Context, in *GetProfileRequest, opts ...grpc.CallOption) (*ProfileReply, error) {
-	out := new(ProfileReply)
-	err := c.cc.Invoke(ctx, Backend_GetProfile_FullMethodName, in, out, opts...)
+func (c *backendClient) DeleteFile(ctx context.Context, in *DeleteFileRequest, opts ...grpc.CallOption) (*DeleteFileReply, error) {
+	out := new(DeleteFileReply)
+	err := c.cc.Invoke(ctx, Backend_DeleteFile_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *backendClient) ListFileByType(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error) {
+	out := new(ListFileReply)
+	err := c.cc.Invoke(ctx, Backend_ListFileByType_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +109,8 @@ type BackendServer interface {
 	Register(context.Context, *RegisterRequest) (*UserReply, error)
 	GetCurrentUser(context.Context, *GetCurrentUserRequest) (*UserReply, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UserReply, error)
-	GetProfile(context.Context, *GetProfileRequest) (*ProfileReply, error)
+	DeleteFile(context.Context, *DeleteFileRequest) (*DeleteFileReply, error)
+	ListFileByType(context.Context, *ListFileRequest) (*ListFileReply, error)
 	mustEmbedUnimplementedBackendServer()
 }
 
@@ -118,8 +130,11 @@ func (UnimplementedBackendServer) GetCurrentUser(context.Context, *GetCurrentUse
 func (UnimplementedBackendServer) UpdateUser(context.Context, *UpdateUserRequest) (*UserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
-func (UnimplementedBackendServer) GetProfile(context.Context, *GetProfileRequest) (*ProfileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetProfile not implemented")
+func (UnimplementedBackendServer) DeleteFile(context.Context, *DeleteFileRequest) (*DeleteFileReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteFile not implemented")
+}
+func (UnimplementedBackendServer) ListFileByType(context.Context, *ListFileRequest) (*ListFileReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListFileByType not implemented")
 }
 func (UnimplementedBackendServer) mustEmbedUnimplementedBackendServer() {}
 
@@ -206,20 +221,38 @@ func _Backend_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Backend_GetProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetProfileRequest)
+func _Backend_DeleteFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteFileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BackendServer).GetProfile(ctx, in)
+		return srv.(BackendServer).DeleteFile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Backend_GetProfile_FullMethodName,
+		FullMethod: Backend_DeleteFile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BackendServer).GetProfile(ctx, req.(*GetProfileRequest))
+		return srv.(BackendServer).DeleteFile(ctx, req.(*DeleteFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Backend_ListFileByType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BackendServer).ListFileByType(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Backend_ListFileByType_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BackendServer).ListFileByType(ctx, req.(*ListFileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -248,8 +281,12 @@ var Backend_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Backend_UpdateUser_Handler,
 		},
 		{
-			MethodName: "GetProfile",
-			Handler:    _Backend_GetProfile_Handler,
+			MethodName: "DeleteFile",
+			Handler:    _Backend_DeleteFile_Handler,
+		},
+		{
+			MethodName: "ListFileByType",
+			Handler:    _Backend_ListFileByType_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

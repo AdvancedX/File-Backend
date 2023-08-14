@@ -35,29 +35,36 @@ func (v *FileUsecase) CreateFile(ctx context.Context, file *File) error {
 	return v.file.Save(ctx, file)
 }
 func (v *FileUsecase) UpdateFile(ctx context.Context, file *File) error {
-	return v.tm.ExecTx(ctx, func(ctx context.Context) error {
-		exist, ok, err := v.file.Exists(ctx, file.ID)
+	exist, ok, err := v.file.Exists(ctx, file.ID)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return errors.New(500, "file not exists", "文件不存在")
+	}
+	file.RelativePath = exist.RelativePath
+
+	intermediatePath := uuid.New().String()
+	if file.FilePart != nil {
+		fileRelativePath := path.Join(v.conf.File.FilePath, intermediatePath, file.FilePart.Filename)
+		// 单个视频文件，串行上传
+		err = v.localfile.SaveLocalFile(fileRelativePath, file.FilePart)
 		if err != nil {
 			return err
 		}
-		if !ok {
-			return errors.New(500, "video not exists", "文件不存在")
-		}
-		file.RelativePath = exist.RelativePath
-
-		intermediatePath := uuid.New().String()
-		if file.FilePart != nil {
-			fileRelativePath := path.Join(v.conf.File.FilePath, intermediatePath, file.FilePart.Filename)
-			// 单个视频文件，串行上传
-			err = v.localfile.SaveLocalFile(fileRelativePath, file.FilePart)
-			if err != nil {
-				return err
-			}
-			file.RelativePath = &fileRelativePath
-		}
-		return v.file.Update(ctx, file)
-	})
+		file.RelativePath = &fileRelativePath
+	}
+	return v.file.Update(ctx, file)
 }
+
+func (v *FileUsecase) ListByType(ctx context.Context, fileType string) ([]*File, error) {
+	return v.file.ListByType(ctx, fileType)
+}
+
+func (v *FileUsecase) DeleteOne(ctx context.Context, fileID string) error {
+	return v.file.DeleteOne(ctx, fileID)
+}
+
 func NewFileUsecase(localfile FileLocalRepo, file FileRepo, conf *conf.Data, tm Transaction, logger log.Logger) *FileUsecase {
 	return &FileUsecase{
 		localfile: localfile,

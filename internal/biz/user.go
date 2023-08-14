@@ -3,16 +3,11 @@ package biz
 import (
 	"context"
 	"golang.org/x/crypto/bcrypt"
-	v1 "kratos-realworld/api/backend/v1"
 	"kratos-realworld/internal/conf"
 	"kratos-realworld/internal/pkg/middleware/auth"
 
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
-)
-
-var (
-	ErrUserNotFound = errors.NotFound(v1.ErrorReason_USER_NOT_FOUND.String(), "user not found")
 )
 
 type User struct {

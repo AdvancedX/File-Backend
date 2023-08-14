@@ -6,24 +6,6 @@ info:
     title: Backend API
     version: 0.0.1
 paths:
-    /api/profiles/{username}:
-        get:
-            tags:
-                - Backend
-            operationId: Backend_GetProfile
-            parameters:
-                - name: username
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/backend.v1.ProfileReply'
     /api/user:
         get:
             tags:
@@ -89,8 +71,73 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/backend.v1.UserReply'
+    /v1/file/{fileID}:
+        delete:
+            tags:
+                - Backend
+            operationId: Backend_DeleteFile
+            parameters:
+                - name: fileID
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/backend.v1.DeleteFileReply'
+    /v1/file/{fileType}:
+        get:
+            tags:
+                - Backend
+            operationId: Backend_ListFileByType
+            parameters:
+                - name: fileType
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/backend.v1.ListFileReply'
 components:
     schemas:
+        backend.v1.DeleteFileReply:
+            type: object
+            properties: {}
+        backend.v1.File:
+            type: object
+            properties:
+                id:
+                    type: string
+                type:
+                    type: string
+                title:
+                    type: string
+                description:
+                    type: string
+                tags:
+                    type: array
+                    items:
+                        type: string
+                updateTime:
+                    type: string
+                filePath:
+                    type: string
+        backend.v1.ListFileReply:
+            type: object
+            properties:
+                files:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/backend.v1.File'
         backend.v1.LoginRequest:
             type: object
             properties:
@@ -103,22 +150,6 @@ components:
                     type: string
                 password:
                     type: string
-        backend.v1.Profile:
-            type: object
-            properties:
-                username:
-                    type: string
-                bio:
-                    type: string
-                image:
-                    type: string
-                following:
-                    type: boolean
-        backend.v1.ProfileReply:
-            type: object
-            properties:
-                profile:
-                    $ref: '#/components/schemas/backend.v1.Profile'
         backend.v1.RegisterRequest:
             type: object
             properties:
@@ -164,10 +195,6 @@ components:
                 token:
                     type: string
                 username:
-                    type: string
-                bio:
-                    type: string
-                image:
                     type: string
 tags:
     - name: Backend
