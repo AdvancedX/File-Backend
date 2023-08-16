@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/uuid"
 	"kratos-realworld/internal/conf"
+	"os"
 	"path"
 )
 
@@ -21,6 +22,10 @@ type ProfileUsecase struct {
 	pr ProfileRepo
 
 	log *log.Helper
+}
+type DownloadFileReply struct {
+	Title    string
+	FilePart *os.File
 }
 
 func (v *FileUsecase) CreateFile(ctx context.Context, file *File) error {
@@ -63,6 +68,9 @@ func (v *FileUsecase) ListByType(ctx context.Context, fileType string) ([]*File,
 
 func (v *FileUsecase) DeleteOne(ctx context.Context, fileID string) error {
 	return v.file.DeleteOne(ctx, fileID)
+}
+func (v *FileUsecase) DownloadFile(ctx context.Context, fileID string) (*DownloadFileReply, error) {
+	return v.file.DownloadFile(ctx, fileID)
 }
 
 func NewFileUsecase(localfile FileLocalRepo, file FileRepo, conf *conf.Data, tm Transaction, logger log.Logger) *FileUsecase {

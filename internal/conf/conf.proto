@@ -30,6 +30,10 @@ message Data {
   message Database {
     string dsn = 1;
   }
+  message Frontend {
+    string downloadPath = 1;
+    string addr = 2;
+  }
   message File {
     string basePath = 1;
     string feedbackPath = 2;
@@ -38,6 +42,8 @@ message Data {
   }
   Database database = 1;
   File file =2;
+  Frontend frontend = 3;
+
 }
 message JWT{
   string secret = 1;

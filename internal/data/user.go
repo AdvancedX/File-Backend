@@ -15,8 +15,6 @@ type User struct {
 	ID           uint
 	Email        string
 	Username     string
-	Bio          string
-	Image        string
 	PasswordHash string
 }
 type userRepo struct {
@@ -38,8 +36,6 @@ func (r *userRepo) CreateUser(ctx context.Context, u *biz.User) error {
 	user := User{
 		Email:        u.Email,
 		Username:     u.Username,
-		Bio:          u.Bio,
-		Image:        u.Image,
 		PasswordHash: u.PasswordHash,
 	}
 	collection := r.data.db.Collection("users")
@@ -71,8 +67,6 @@ func (r *userRepo) GetUserByEmail(ctx context.Context, email string) (*biz.User,
 		ID:           user.ID,
 		Email:        user.Email,
 		Username:     user.Username,
-		Bio:          user.Bio,
-		Image:        user.Image,
 		PasswordHash: user.PasswordHash,
 	}, nil
 }
@@ -108,8 +102,6 @@ func (r *userRepo) GetUserByID(ctx context.Context, id uint) (*biz.User, error) 
 		ID:           user.ID,
 		Email:        user.Email,
 		Username:     user.Username,
-		Bio:          user.Bio,
-		Image:        user.Image,
 		PasswordHash: user.PasswordHash,
 	}, nil
 }
@@ -132,8 +124,6 @@ func (r *userRepo) GetUserByUsername(ctx context.Context, username string) (rv *
 		ID:           u.ID,
 		Email:        u.Email,
 		Username:     u.Username,
-		Bio:          u.Bio,
-		Image:        u.Image,
 		PasswordHash: u.PasswordHash,
 	}, nil
 }
@@ -146,9 +136,7 @@ func (r *userRepo) UpdateUser(ctx context.Context, in *biz.User) (rv *biz.User, 
 	update := bson.M{
 		"$set": bson.M{
 			"email":         in.Email,
-			"bio":           in.Bio,
 			"password_hash": in.PasswordHash,
-			"image":         in.Image,
 		},
 	}
 
@@ -172,8 +160,6 @@ func (r *userRepo) UpdateUser(ctx context.Context, in *biz.User) (rv *biz.User, 
 		ID:           updatedUser.ID,
 		Email:        updatedUser.Email,
 		Username:     updatedUser.Username,
-		Bio:          updatedUser.Bio,
-		Image:        updatedUser.Image,
 		PasswordHash: updatedUser.PasswordHash,
 	}, nil
 }

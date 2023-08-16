@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"io"
 	"kratos-realworld/internal/pkg/middleware/auth"
 	"kratos-realworld/internal/pkg/utils"
 	"kratos-realworld/internal/service"
@@ -77,4 +78,41 @@ func UpdateFileHandler(backend *service.BackendService) func(ctx http.Context) e
 		reply, _ := out.(*service.UpdateFileResponse)
 		return ctx.Result(200, reply)
 	}
+}
+func DownloadFileHandler(backend *service.BackendService) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		req := &service.DownloadFileRequest{}
+		err := ctx.Request().ParseMultipartForm(20 << 26)
+		if err != nil {
+			return err
+		}
+		req.ID = ctx.Request().MultipartForm.Value["id"][0]
+		if err != nil {
+			return err
+		}
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return backend.DownloadFileHandler(ctx, req.(*service.DownloadFileRequest))
+		})
+
+		out, err := h(ctx, req)
+		if err != nil {
+			return err
+		}
+
+		reply, _ := out.(*service.DownloadFileReply)
+		err = streamFile(reply, ctx.Response())
+		return nil
+	}
+}
+
+// streamFile 流式文件传输
+func streamFile(reply *service.DownloadFileReply, w http.ResponseWriter) error {
+	w.Header().Set("Content-Disposition", "attachment;filename="+reply.Title)
+
+	if _, err := io.Copy(w, reply.FilePart); err != nil {
+		// 处理错误
+		return err
+	}
+	defer reply.FilePart.Close()
+	return nil
 }

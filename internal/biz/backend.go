@@ -29,6 +29,7 @@ type FileRepo interface {
 	ListByType(ctx context.Context, fileType string) ([]*File, error)
 	DeleteOne(ctx context.Context, fileID string) error
 	ListTagsByType(ctx context.Context, fileType string) ([]string, error)
+	DownloadFile(ctx context.Context, fileID string) (*DownloadFileReply, error)
 }
 type BackendUsecase struct {
 	repo BackendRepo

@@ -36,12 +36,18 @@ service Backend {
 
   rpc DeleteFile(DeleteFileRequest) returns (DeleteFileReply) {
     option (google.api.http) = {
-        delete:"/v1/file/{fileID}",
+      delete:"/v1/file/{fileID}",
     };
   }
   rpc ListFileByType(ListFileRequest) returns (ListFileReply) {
     option (google.api.http) = {
       get : "/v1/file/{fileType}",
+    };
+  }
+  rpc DownloadFile(DownloadFileRequest) returns (DownloadFileReply) {
+    option (google.api.http) = {
+      post : "/download/{fileID}" ,
+      body:"*",
     };
   }
 }
@@ -66,18 +72,6 @@ message UpdateUserRequest {
 
 
 
-message File {
-  string id = 1;
-  string type = 2;
-  string title = 3;
-  string description = 4;
-  repeated string tags = 5;
-  string updateTime = 6;
-  string filePath = 7;
-}
-
-
-
 message UserReply {
   
   message User {
@@ -87,9 +81,6 @@ message UserReply {
   }
   User user = 1;
 }
-
-
-
 message LoginRequest {
 
   message User {
@@ -99,23 +90,29 @@ message LoginRequest {
 
   User user = 1;
 }
-
-
-
 message RegisterRequest{
 
   message User {
     string username = 1;
     string email = 2;
     string password = 3;
+  }
+  User user = 1;
 }
 
-User user = 1;
+
+message File {
+  string id = 1;
+  string type = 2;
+  string title = 3;
+  string description = 4;
+  repeated string tags = 5;
+  string updateTime = 6;
+  string filePath = 7;
 }
-
-
-
 message DeleteFileRequest{string fileID =1;}
 message DeleteFileReply{}
 message ListFileRequest{string fileType =1;}
 message ListFileReply{repeated File files =1;}
+message DownloadFileRequest{string  fileID =1;}
+message DownloadFileReply{}

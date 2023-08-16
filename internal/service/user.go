@@ -50,8 +50,6 @@ func (b *BackendService) UpdateUser(ctx context.Context, req *v1.UpdateUserReque
 		Email:    req.User.GetEmail(),
 		Username: req.User.GetUsername(),
 		Password: req.User.GetPassword(),
-		Bio:      req.User.GetBio(),
-		Image:    req.User.GetImage(),
 	})
 	if err != nil {
 		return nil, err

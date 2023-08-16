@@ -11,27 +11,23 @@ import (
 )
 
 type User struct {
-	ID           uint
-	Username     string
-	Token        string
-	Email        string
-	Bio          string
-	Image        string
+	ID       uint
+	Username string
+	Token    string
+	Email    string
+
 	PasswordHash string
 }
 type UserLogin struct {
 	Email    string
 	Username string
-	Bio      string
-	Image    string
-	Token    string
+
+	Token string
 }
 type UserUpdate struct {
 	Email    string
 	Username string
 	Password string
-	Bio      string
-	Image    string
 }
 type ProfileRepo interface {
 	GetProfile(ctx context.Context, username string) (*Profile, error)
@@ -42,8 +38,6 @@ type ProfileRepo interface {
 type Profile struct {
 	ID        uint
 	Username  string
-	Bio       string
-	Image     string
 	Following bool
 }
 
@@ -111,9 +105,8 @@ func (uc *UserUsecase) Login(ctx context.Context, email, password string) (*User
 	return &UserLogin{
 		Email:    u.Email,
 		Username: u.Username,
-		Bio:      u.Bio,
-		Image:    u.Image,
-		Token:    uc.generateToken(u.ID),
+
+		Token: uc.generateToken(u.ID),
 	}, nil
 }
 func (uc *UserUsecase) GetCurrentUser(ctx context.Context) (*User, error) {
@@ -136,9 +129,7 @@ func (uc *UserUsecase) UpdateUser(ctx context.Context, uu *UserUpdate) (*UserLog
 		return nil, err
 	}
 	u.Email = uu.Email
-	u.Image = uu.Image
 	u.PasswordHash = hashPassword(uu.Password)
-	u.Bio = uu.Bio
 	u, err = uc.ur.UpdateUser(ctx, u)
 	if err != nil {
 		return nil, err
@@ -146,8 +137,6 @@ func (uc *UserUsecase) UpdateUser(ctx context.Context, uu *UserUpdate) (*UserLog
 	return &UserLogin{
 		Email:    u.Email,
 		Username: u.Username,
-		Bio:      u.Bio,
-		Image:    u.Image,
 		Token:    uc.generateToken(u.ID),
 	}, nil
 }

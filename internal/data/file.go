@@ -5,6 +5,7 @@ import (
 	"kratos-realworld/internal/biz"
 	"kratos-realworld/internal/pkg/utils"
 	"os"
+	"path"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -126,7 +127,7 @@ func (v *fileRepo) DeleteOne(ctx context.Context, fileID string) error {
 		return err
 	}
 	var document File
-	err = v.collection.FindOne(context.Background(), bson.M{"_id": idFromHex}).Decode(&document)
+	err = v.collection.FindOne(ctx, bson.M{"_id": idFromHex}).Decode(&document)
 	filepath := "file/" + *document.RelativePath
 	_, err = v.collection.DeleteOne(ctx, bson.M{"_id": idFromHex})
 	if err != nil {
@@ -170,6 +171,27 @@ func (v *fileRepo) FindPathByID(ctx context.Context, fileID string) (*string, er
 	cursor.
 		All(ctx, &files)
 	return files.RelativePath, nil
+}
+func (v *fileRepo) DownloadFile(ctx context.Context, fileID string) (*biz.DownloadFileReply, error) {
+	idFromHex, err := primitive.ObjectIDFromHex(fileID)
+	if err != nil {
+		return nil, err
+	}
+	var document File
+	err = v.collection.FindOne(ctx, bson.M{"_id": idFromHex}).Decode(&document)
+	if err != nil {
+		return nil, err
+	}
+	filePath := path.Join("file", *document.RelativePath)
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	return &biz.DownloadFileReply{
+		Title:    document.Title + document.Type,
+		FilePart: file,
+	}, nil
 }
 func NewFileRepo(data *Data, logger log.Logger) biz.FileRepo {
 	return &fileRepo{

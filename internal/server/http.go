@@ -59,6 +59,6 @@ func NewHTTPServer(c *conf.Server, jwtc *conf.JWT, backend *service.BackendServi
 	r := srv.Route("/")
 	r.POST("/v1/file", CreateFileHandler(backend))
 	r.PUT("/v1/file", UpdateFileHandler(backend))
-
+	r.POST("/download", DownloadFileHandler(backend))
 	return srv
 }

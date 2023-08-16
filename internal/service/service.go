@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
+	"github.com/google/wire"
 	v1 "kratos-realworld/api/backend/v1"
 	"mime/multipart"
-
-	"github.com/google/wire"
+	"os"
 
 	"kratos-realworld/internal/biz"
 )
@@ -33,6 +33,14 @@ type CreateFileResponse struct {
 	reply string
 }
 type UpdateFileResponse struct{}
+type DownloadFileRequest struct {
+	ID string
+}
+
+type DownloadFileReply struct {
+	Title    string
+	FilePart *os.File
+}
 
 func (b *BackendService) CreateFileHandler(ctx context.Context, req *CreateFileRequest) (*CreateFileResponse, error) {
 	file := &biz.File{
@@ -86,6 +94,18 @@ func (b *BackendService) ListFileByType(ctx context.Context, in *v1.ListFileRequ
 	}
 	return &v1.ListFileReply{Files: results}, nil
 }
-func (b *BackendService) DeleteFile(ctx context.Context, in *v1.DeleteFileRequest) (*v1.DeleteFileReply, error) {
+func (b *BackendService) DeleteFileHandler(ctx context.Context, in *v1.DeleteFileRequest) (*v1.DeleteFileReply, error) {
 	return &v1.DeleteFileReply{}, b.fc.DeleteOne(ctx, in.FileID)
+}
+
+func (b *BackendService) DownloadFileHandler(ctx context.Context, req *DownloadFileRequest) (*DownloadFileReply, error) {
+	result, err := b.fc.DownloadFile(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &DownloadFileReply{
+		Title:    result.Title,
+		FilePart: result.FilePart,
+	}, nil
 }
