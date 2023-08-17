@@ -6,6 +6,7 @@ import (
 	"kratos-realworld/internal/pkg/utils"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -129,11 +130,13 @@ func (v *fileRepo) DeleteOne(ctx context.Context, fileID string) error {
 	var document File
 	err = v.collection.FindOne(ctx, bson.M{"_id": idFromHex}).Decode(&document)
 	filepath := "file/" + *document.RelativePath
+	filename := "/" + document.Title + document.Type
+	dirpath := strings.ReplaceAll(filepath, filename, "")
 	_, err = v.collection.DeleteOne(ctx, bson.M{"_id": idFromHex})
 	if err != nil {
 		return err
 	}
-	err = os.Remove(filepath)
+	err = os.RemoveAll(dirpath)
 	if err != nil {
 		return err
 	}

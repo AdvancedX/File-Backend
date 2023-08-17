@@ -94,7 +94,7 @@ func (b *BackendService) ListFileByType(ctx context.Context, in *v1.ListFileRequ
 	}
 	return &v1.ListFileReply{Files: results}, nil
 }
-func (b *BackendService) DeleteFileHandler(ctx context.Context, in *v1.DeleteFileRequest) (*v1.DeleteFileReply, error) {
+func (b *BackendService) DeleteFile(ctx context.Context, in *v1.DeleteFileRequest) (*v1.DeleteFileReply, error) {
 	return &v1.DeleteFileReply{}, b.fc.DeleteOne(ctx, in.FileID)
 }
 
