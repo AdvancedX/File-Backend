@@ -71,30 +71,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/backend.v1.UserReply'
-    /download/{fileID}:
-        post:
-            tags:
-                - Backend
-            operationId: Backend_DownloadFile
-            parameters:
-                - name: fileID
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/backend.v1.DownloadFileRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/backend.v1.DownloadFileReply'
     /v1/file/{fileID}:
         delete:
             tags:
@@ -131,19 +107,29 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/backend.v1.ListFileReply'
+    /v1/filename/{fileName}:
+        get:
+            tags:
+                - Backend
+            operationId: Backend_FindFileByName
+            parameters:
+                - name: fileName
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/backend.v1.FindFileReply'
 components:
     schemas:
         backend.v1.DeleteFileReply:
             type: object
             properties: {}
-        backend.v1.DownloadFileReply:
-            type: object
-            properties: {}
-        backend.v1.DownloadFileRequest:
-            type: object
-            properties:
-                fileID:
-                    type: string
         backend.v1.File:
             type: object
             properties:
@@ -163,6 +149,11 @@ components:
                     type: string
                 filePath:
                     type: string
+        backend.v1.FindFileReply:
+            type: object
+            properties:
+                file:
+                    $ref: '#/components/schemas/backend.v1.File'
         backend.v1.ListFileReply:
             type: object
             properties:

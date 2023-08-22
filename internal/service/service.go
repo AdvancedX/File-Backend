@@ -97,6 +97,22 @@ func (b *BackendService) ListFileByType(ctx context.Context, in *v1.ListFileRequ
 func (b *BackendService) DeleteFile(ctx context.Context, in *v1.DeleteFileRequest) (*v1.DeleteFileReply, error) {
 	return &v1.DeleteFileReply{}, b.fc.DeleteOne(ctx, in.FileID)
 }
+func (b *BackendService) FindFileByName(ctx context.Context, in *v1.FindFileRequest) (*v1.FindFileReply, error) {
+	file, err := b.fc.FindByName(ctx, in.FileName)
+	if err != nil {
+		return nil, err
+	}
+	files := &v1.File{
+		Id:          file.ID,
+		Type:        file.Type,
+		Title:       file.Title,
+		Description: file.Description,
+		Tags:        file.Tags,
+		FilePath:    *file.RelativePath,
+		UpdateTime:  file.UpdateTime.Local().Format("2006-01-02 15:04:05"),
+	}
+	return &v1.FindFileReply{File: files}, nil
+}
 
 func (b *BackendService) DownloadFileHandler(ctx context.Context, req *DownloadFileRequest) (*DownloadFileReply, error) {
 	result, err := b.fc.DownloadFile(ctx, req.ID)

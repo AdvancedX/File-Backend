@@ -21,10 +21,6 @@ type userRepo struct {
 	data *Data
 	log  *log.Helper
 }
-type profileRepo struct {
-	data *Data
-	log  *log.Helper
-}
 
 func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 	return &userRepo{
@@ -37,6 +33,9 @@ func (r *userRepo) CreateUser(ctx context.Context, u *biz.User) error {
 		Email:        u.Email,
 		Username:     u.Username,
 		PasswordHash: u.PasswordHash,
+	}
+	if r.isUserExist(ctx, u.Email) {
+		return errors.New(404, "email is already being registered", "please try another")
 	}
 	collection := r.data.db.Collection("users")
 
@@ -163,19 +162,15 @@ func (r *userRepo) UpdateUser(ctx context.Context, in *biz.User) (rv *biz.User, 
 		PasswordHash: updatedUser.PasswordHash,
 	}, nil
 }
-func (r *profileRepo) GetProfile(ctx context.Context, username string) (*biz.Profile, error) {
-	collection := r.data.db.Collection("profiles")
 
-	filter := bson.M{"username": username}
-	var u biz.Profile
-	err := collection.FindOne(ctx, filter).Decode(&u)
+func (r *userRepo) isUserExist(ctx context.Context, email string) bool {
+	collection := r.data.db.Collection("users")
+	filter := bson.M{"email": email}
+
+	user := new(User)
+	err := collection.FindOne(ctx, filter).Decode(user)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// 用户不存在的情况
-			return nil, nil
-		}
-		return nil, err
+		return false
 	}
-
-	return &u, nil
+	return true
 }

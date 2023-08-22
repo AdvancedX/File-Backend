@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/errors"
 	"kratos-realworld/internal/biz"
 	"kratos-realworld/internal/pkg/utils"
 	"os"
@@ -171,8 +172,10 @@ func (v *fileRepo) FindPathByID(ctx context.Context, fileID string) (*string, er
 		return nil, err
 	}
 	var files = File{RelativePath: nil}
-	cursor.
-		All(ctx, &files)
+	err = cursor.All(ctx, &files)
+	if err != nil {
+		return nil, err
+	}
 	return files.RelativePath, nil
 }
 func (v *fileRepo) DownloadFile(ctx context.Context, fileID string) (*biz.DownloadFileReply, error) {
@@ -195,6 +198,31 @@ func (v *fileRepo) DownloadFile(ctx context.Context, fileID string) (*biz.Downlo
 		Title:    document.Title + document.Type,
 		FilePart: file,
 	}, nil
+}
+func (v *fileRepo) FindFileByName(ctx context.Context, FileName string) (*biz.File, error) {
+	var file File
+	err := v.collection.FindOne(ctx, bson.M{"title": FileName}).Decode(&file)
+	if err != nil {
+		return nil, errors.New(998, "cannot find file", "")
+	}
+	return &biz.File{
+		ID:           file.ID.Hex(),
+		Type:         file.Type,
+		Title:        file.Title,
+		Description:  file.Description,
+		Tags:         file.Tags,
+		FilePart:     nil,
+		UpdateTime:   file.UpdateTime,
+		RelativePath: file.RelativePath,
+	}, nil
+}
+func (v *fileRepo) AvoidRepeatedFile(ctx context.Context, FileName string, Type string) error {
+	var file File
+	v.collection.FindOne(ctx, bson.M{"title": FileName}).Decode(&file)
+	if file.Type == Type {
+		return errors.New(500, "File already exist", "Please Update another")
+	}
+	return nil
 }
 func NewFileRepo(data *Data, logger log.Logger) biz.FileRepo {
 	return &fileRepo{

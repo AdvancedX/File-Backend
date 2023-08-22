@@ -25,7 +25,7 @@ const (
 	Backend_UpdateUser_FullMethodName     = "/backend.v1.Backend/UpdateUser"
 	Backend_DeleteFile_FullMethodName     = "/backend.v1.Backend/DeleteFile"
 	Backend_ListFileByType_FullMethodName = "/backend.v1.Backend/ListFileByType"
-	Backend_DownloadFile_FullMethodName   = "/backend.v1.Backend/DownloadFile"
+	Backend_FindFileByName_FullMethodName = "/backend.v1.Backend/FindFileByName"
 )
 
 // BackendClient is the client API for Backend service.
@@ -38,7 +38,7 @@ type BackendClient interface {
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UserReply, error)
 	DeleteFile(ctx context.Context, in *DeleteFileRequest, opts ...grpc.CallOption) (*DeleteFileReply, error)
 	ListFileByType(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error)
-	DownloadFile(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (*DownloadFileReply, error)
+	FindFileByName(ctx context.Context, in *FindFileRequest, opts ...grpc.CallOption) (*FindFileReply, error)
 }
 
 type backendClient struct {
@@ -103,9 +103,9 @@ func (c *backendClient) ListFileByType(ctx context.Context, in *ListFileRequest,
 	return out, nil
 }
 
-func (c *backendClient) DownloadFile(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (*DownloadFileReply, error) {
-	out := new(DownloadFileReply)
-	err := c.cc.Invoke(ctx, Backend_DownloadFile_FullMethodName, in, out, opts...)
+func (c *backendClient) FindFileByName(ctx context.Context, in *FindFileRequest, opts ...grpc.CallOption) (*FindFileReply, error) {
+	out := new(FindFileReply)
+	err := c.cc.Invoke(ctx, Backend_FindFileByName_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ type BackendServer interface {
 	UpdateUser(context.Context, *UpdateUserRequest) (*UserReply, error)
 	DeleteFile(context.Context, *DeleteFileRequest) (*DeleteFileReply, error)
 	ListFileByType(context.Context, *ListFileRequest) (*ListFileReply, error)
-	DownloadFile(context.Context, *DownloadFileRequest) (*DownloadFileReply, error)
+	FindFileByName(context.Context, *FindFileRequest) (*FindFileReply, error)
 	mustEmbedUnimplementedBackendServer()
 }
 
@@ -148,8 +148,8 @@ func (UnimplementedBackendServer) DeleteFile(context.Context, *DeleteFileRequest
 func (UnimplementedBackendServer) ListFileByType(context.Context, *ListFileRequest) (*ListFileReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListFileByType not implemented")
 }
-func (UnimplementedBackendServer) DownloadFile(context.Context, *DownloadFileRequest) (*DownloadFileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DownloadFile not implemented")
+func (UnimplementedBackendServer) FindFileByName(context.Context, *FindFileRequest) (*FindFileReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindFileByName not implemented")
 }
 func (UnimplementedBackendServer) mustEmbedUnimplementedBackendServer() {}
 
@@ -272,20 +272,20 @@ func _Backend_ListFileByType_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Backend_DownloadFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DownloadFileRequest)
+func _Backend_FindFileByName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindFileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BackendServer).DownloadFile(ctx, in)
+		return srv.(BackendServer).FindFileByName(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Backend_DownloadFile_FullMethodName,
+		FullMethod: Backend_FindFileByName_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BackendServer).DownloadFile(ctx, req.(*DownloadFileRequest))
+		return srv.(BackendServer).FindFileByName(ctx, req.(*FindFileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -322,8 +322,8 @@ var Backend_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Backend_ListFileByType_Handler,
 		},
 		{
-			MethodName: "DownloadFile",
-			Handler:    _Backend_DownloadFile_Handler,
+			MethodName: "FindFileByName",
+			Handler:    _Backend_FindFileByName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -44,10 +44,9 @@ service Backend {
       get : "/v1/file/{fileType}",
     };
   }
-  rpc DownloadFile(DownloadFileRequest) returns (DownloadFileReply) {
+  rpc FindFileByName(FindFileRequest) returns (FindFileReply) {
     option (google.api.http) = {
-      post : "/download/{fileID}" ,
-      body:"*",
+      get : "/v1/filename/{fileName}",
     };
   }
 }
@@ -114,5 +113,5 @@ message DeleteFileRequest{string fileID =1;}
 message DeleteFileReply{}
 message ListFileRequest{string fileType =1;}
 message ListFileReply{repeated File files =1;}
-message DownloadFileRequest{string  fileID =1;}
-message DownloadFileReply{}
+message FindFileRequest{string fileName = 1;}
+message FindFileReply{File file = 1;}

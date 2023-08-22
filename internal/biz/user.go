@@ -78,6 +78,7 @@ func (uc *UserUsecase) generateToken(userID uint) string {
 	return auth.GenerateToken(uc.jwtc.Secret, userID)
 }
 func (uc *UserUsecase) Register(ctx context.Context, username, email, password string) (*UserLogin, error) {
+
 	u := &User{
 		Email:        email,
 		Username:     username,
@@ -110,7 +111,6 @@ func (uc *UserUsecase) Login(ctx context.Context, email, password string) (*User
 	}, nil
 }
 func (uc *UserUsecase) GetCurrentUser(ctx context.Context) (*User, error) {
-
 	cu := auth.FromContext(ctx)
 	if cu == nil {
 		panic("cu is nil")

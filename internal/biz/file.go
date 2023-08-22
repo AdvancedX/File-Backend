@@ -29,10 +29,14 @@ type DownloadFileReply struct {
 }
 
 func (v *FileUsecase) CreateFile(ctx context.Context, file *File) error {
+	err := v.file.AvoidRepeatedFile(ctx, file.Title, file.Type)
+	if err != nil {
+		return err
+	}
 	intermediatePath := uuid.New().String()
 	fileRelativePath := path.Join(v.conf.File.FilePath, intermediatePath, file.FilePart.Filename)
 	// 单个文件，串行上传
-	err := v.localfile.SaveLocalFile(fileRelativePath, file.FilePart)
+	err = v.localfile.SaveLocalFile(fileRelativePath, file.FilePart)
 	if err != nil {
 		return err
 	}
@@ -65,7 +69,9 @@ func (v *FileUsecase) UpdateFile(ctx context.Context, file *File) error {
 func (v *FileUsecase) ListByType(ctx context.Context, fileType string) ([]*File, error) {
 	return v.file.ListByType(ctx, fileType)
 }
-
+func (v *FileUsecase) FindByName(ctx context.Context, FileName string) (*File, error) {
+	return v.file.FindFileByName(ctx, FileName)
+}
 func (v *FileUsecase) DeleteOne(ctx context.Context, fileID string) error {
 	return v.file.DeleteOne(ctx, fileID)
 }

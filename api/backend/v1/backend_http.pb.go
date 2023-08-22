@@ -20,7 +20,7 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationBackendDeleteFile = "/backend.v1.Backend/DeleteFile"
-const OperationBackendDownloadFile = "/backend.v1.Backend/DownloadFile"
+const OperationBackendFindFileByName = "/backend.v1.Backend/FindFileByName"
 const OperationBackendGetCurrentUser = "/backend.v1.Backend/GetCurrentUser"
 const OperationBackendListFileByType = "/backend.v1.Backend/ListFileByType"
 const OperationBackendLogin = "/backend.v1.Backend/Login"
@@ -29,7 +29,7 @@ const OperationBackendUpdateUser = "/backend.v1.Backend/UpdateUser"
 
 type BackendHTTPServer interface {
 	DeleteFile(context.Context, *DeleteFileRequest) (*DeleteFileReply, error)
-	DownloadFile(context.Context, *DownloadFileRequest) (*DownloadFileReply, error)
+	FindFileByName(context.Context, *FindFileRequest) (*FindFileReply, error)
 	GetCurrentUser(context.Context, *GetCurrentUserRequest) (*UserReply, error)
 	ListFileByType(context.Context, *ListFileRequest) (*ListFileReply, error)
 	Login(context.Context, *LoginRequest) (*UserReply, error)
@@ -45,7 +45,7 @@ func RegisterBackendHTTPServer(s *http.Server, srv BackendHTTPServer) {
 	r.PUT("/api/user", _Backend_UpdateUser0_HTTP_Handler(srv))
 	r.DELETE("/v1/file/{fileID}", _Backend_DeleteFile0_HTTP_Handler(srv))
 	r.GET("/v1/file/{fileType}", _Backend_ListFileByType0_HTTP_Handler(srv))
-	r.POST("/download/{fileID}", _Backend_DownloadFile0_HTTP_Handler(srv))
+	r.GET("/v1/filename/{fileName}", _Backend_FindFileByName0_HTTP_Handler(srv))
 }
 
 func _Backend_Login0_HTTP_Handler(srv BackendHTTPServer) func(ctx http.Context) error {
@@ -177,34 +177,31 @@ func _Backend_ListFileByType0_HTTP_Handler(srv BackendHTTPServer) func(ctx http.
 	}
 }
 
-func _Backend_DownloadFile0_HTTP_Handler(srv BackendHTTPServer) func(ctx http.Context) error {
+func _Backend_FindFileByName0_HTTP_Handler(srv BackendHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in DownloadFileRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
+		var in FindFileRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationBackendDownloadFile)
+		http.SetOperation(ctx, OperationBackendFindFileByName)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.DownloadFile(ctx, req.(*DownloadFileRequest))
+			return srv.FindFileByName(ctx, req.(*FindFileRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*DownloadFileReply)
+		reply := out.(*FindFileReply)
 		return ctx.Result(200, reply)
 	}
 }
 
 type BackendHTTPClient interface {
 	DeleteFile(ctx context.Context, req *DeleteFileRequest, opts ...http.CallOption) (rsp *DeleteFileReply, err error)
-	DownloadFile(ctx context.Context, req *DownloadFileRequest, opts ...http.CallOption) (rsp *DownloadFileReply, err error)
+	FindFileByName(ctx context.Context, req *FindFileRequest, opts ...http.CallOption) (rsp *FindFileReply, err error)
 	GetCurrentUser(ctx context.Context, req *GetCurrentUserRequest, opts ...http.CallOption) (rsp *UserReply, err error)
 	ListFileByType(ctx context.Context, req *ListFileRequest, opts ...http.CallOption) (rsp *ListFileReply, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *UserReply, err error)
@@ -233,13 +230,13 @@ func (c *BackendHTTPClientImpl) DeleteFile(ctx context.Context, in *DeleteFileRe
 	return &out, err
 }
 
-func (c *BackendHTTPClientImpl) DownloadFile(ctx context.Context, in *DownloadFileRequest, opts ...http.CallOption) (*DownloadFileReply, error) {
-	var out DownloadFileReply
-	pattern := "/download/{fileID}"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationBackendDownloadFile))
+func (c *BackendHTTPClientImpl) FindFileByName(ctx context.Context, in *FindFileRequest, opts ...http.CallOption) (*FindFileReply, error) {
+	var out FindFileReply
+	pattern := "/v1/filename/{fileName}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationBackendFindFileByName))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
