@@ -61,8 +61,8 @@ func UpdateFileHandler(backend *service.BackendService) func(ctx http.Context) e
 		FilePartParam := ctx.Request().MultipartForm.File["FilePart"]
 		if len(FilePartParam) != 0 {
 			if !utils.SliceContainsAny(files, strings.ToLower(path.Ext(FilePartParam[0].Filename))) {
-				return err
 				fmt.Println("文件格式错误，请输入其中的一种")
+				return err
 			}
 			req.FilePart = FilePartParam[0]
 		}
