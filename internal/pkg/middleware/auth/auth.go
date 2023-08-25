@@ -17,8 +17,14 @@ type CurrentUser struct {
 	UserID uint
 }
 
-const OperationBackendCustomCreateVideo = "/vistudio.infopage.backend.backend.v1.Backend/custom/createVideo"
-const OperationBackendCustomUpdateVideo = "/vistudio.infopage.backend.backend.v1.Backend/custom/updateVideo"
+func SliceContainsAny[T string](arr []T, target T) bool {
+	for _, v := range arr {
+		if v == target {
+			return true
+		}
+	}
+	return false
+}
 
 func GenerateToken(secret string, userid uint) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{

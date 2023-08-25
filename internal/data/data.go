@@ -3,14 +3,15 @@ package data
 import (
 	"context"
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
-	"kratos-realworld/internal/conf"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"kratos-realworld/internal/conf"
 )
 
 // ProviderSet is data providers.

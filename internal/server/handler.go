@@ -4,13 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-kratos/kratos/v2/transport/http"
-	"io"
-	"kratos-realworld/internal/pkg/middleware/auth"
-	"kratos-realworld/internal/pkg/utils"
-	"kratos-realworld/internal/service"
 	"path"
 	"strings"
+
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"io"
+
+	"kratos-realworld/internal/pkg/middleware/auth"
+	"kratos-realworld/internal/service"
 )
 
 var files = []string{".txt", ".doc", ".pdf", ".xlsx", ".pptx", ".jpg", ".png", ".zip", ".tar", ".gz"}
@@ -27,10 +28,9 @@ func CreateFileHandler(backend *service.BackendService) func(ctx http.Context) e
 		req.Description = ctx.Request().MultipartForm.Value["description"][0]
 		req.Tags = ctx.Request().MultipartForm.Value["tags"]
 		req.FilePart = ctx.Request().MultipartForm.File["FilePart"][0]
-		if !utils.SliceContainsAny(files, strings.ToLower(path.Ext(req.FilePart.Filename))) {
+		if !auth.SliceContainsAny(files, strings.ToLower(path.Ext(req.FilePart.Filename))) {
 			return errors.New("文件格式错误，请输入其中的一种")
 		}
-		http.SetOperation(ctx, auth.OperationBackendCustomCreateVideo)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return backend.CreateFileHandler(ctx, req.(*service.CreateFileRequest))
 		})
@@ -60,13 +60,12 @@ func UpdateFileHandler(backend *service.BackendService) func(ctx http.Context) e
 		req.Tags = strings.Split(ctx.Request().MultipartForm.Value["tags"][0], ",")
 		FilePartParam := ctx.Request().MultipartForm.File["FilePart"]
 		if len(FilePartParam) != 0 {
-			if !utils.SliceContainsAny(files, strings.ToLower(path.Ext(FilePartParam[0].Filename))) {
+			if !auth.SliceContainsAny(files, strings.ToLower(path.Ext(FilePartParam[0].Filename))) {
 				fmt.Println("文件格式错误，请输入其中的一种")
 				return err
 			}
 			req.FilePart = FilePartParam[0]
 		}
-		http.SetOperation(ctx, auth.OperationBackendCustomUpdateVideo)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return backend.UpdateFileHandler(ctx, req.(*service.UpdateFileRequest))
 		})

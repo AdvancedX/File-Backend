@@ -3,9 +3,9 @@ package data
 import (
 	"context"
 
-	"kratos-realworld/internal/biz"
-
 	"github.com/go-kratos/kratos/v2/log"
+
+	"kratos-realworld/internal/biz"
 )
 
 type backendRepo struct {

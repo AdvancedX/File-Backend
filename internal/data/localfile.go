@@ -1,13 +1,3 @@
-/******************************************************************************
-* FILENAME:      file.go
-*
-* AUTHORS:       Xie Rongwang START DATE: 周六 11月 19 2022
-*
-* LAST MODIFIED: 星期六, 十一月 19th 2022, 上午10:06
-*
-* CONTACT:       rongwang.xie@smartmore.com
-******************************************************************************/
-
 package data
 
 import (
@@ -17,6 +7,7 @@ import (
 	"path"
 
 	"github.com/go-kratos/kratos/v2/log"
+
 	"kratos-realworld/internal/biz"
 	"kratos-realworld/internal/conf"
 )

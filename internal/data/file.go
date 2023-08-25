@@ -2,19 +2,20 @@ package data
 
 import (
 	"context"
-	"github.com/go-kratos/kratos/v2/errors"
-	"kratos-realworld/internal/biz"
-	"kratos-realworld/internal/pkg/utils"
+	"kratos-realworld/internal/pkg/middleware/auth"
 	"os"
 	"path"
 	"strings"
 	"time"
 
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"kratos-realworld/internal/biz"
 )
 
 const fileCollection = "file"
@@ -159,7 +160,7 @@ func (v *fileRepo) ListTagsByType(ctx context.Context, fileType string) ([]strin
 	var tags []string
 	for _, file := range files {
 		for _, tag := range file.Tags {
-			if !utils.SliceContainsAny(tags, tag) {
+			if !auth.SliceContainsAny(tags, tag) {
 				tags = append(tags, tag)
 			}
 		}

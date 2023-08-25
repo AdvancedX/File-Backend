@@ -3,10 +3,11 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"kratos-realworld/internal/errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"kratos-realworld/internal/errors"
 )
 
 func TestHTTPStruct(t *testing.T) {

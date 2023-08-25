@@ -2,12 +2,13 @@ package biz
 
 import (
 	"context"
-	"golang.org/x/crypto/bcrypt"
-	"kratos-realworld/internal/conf"
-	"kratos-realworld/internal/pkg/middleware/auth"
 
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"golang.org/x/crypto/bcrypt"
+
+	"kratos-realworld/internal/conf"
+	"kratos-realworld/internal/pkg/middleware/auth"
 )
 
 type User struct {
